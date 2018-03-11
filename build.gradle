@@ -1,0 +1,99 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0"
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+apply plugin: 'io.codearte.nexus-staging'
+
+group 'com.andrewjamesjohnson'
+version '1.0.2-SNAPSHOT'
+archivesBaseName = "java-8-functional-utils"
+ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+// If these properties aren't set, use a dummy value to prevent failures
+ext.ossrhUsername = project.hasProperty('ossrhUsername') ? project.ossrhUsername : 'dummy'
+ext.ossrhPassword = project.hasProperty('ossrhPassword') ? project.ossrhPassword : 'dummy'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+signing {
+    required { isReleaseVersion && gradle.taskGraph.hasTask("uploadArchives") }
+    sign configurations.archives
+}
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+                authentication(userName: ossrhUsername, password: ossrhPassword)
+            }
+
+            pom.project {
+                name 'java-8-functional-utils'
+                packaging 'jar'
+                description 'Various enhancements for functional programming in Java 8'
+                url 'https://github.com/ajsquared/java-8-functional-utils'
+
+                scm {
+                    connection 'https://github.com/ajsquared/java-8-functional-utils.git'
+                    developerConnection 'git@github.com:ajsquared/java-8-functional-utils.git'
+                    url 'https://github.com/ajsquared/java-8-functional-utils/'
+                }
+
+                licenses {
+                    license {
+                        name 'MIT License'
+                        url 'https://github.com/ajsquared/java-8-functional-utils/blob/master/LICENSE'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'ajsquared'
+                        name 'Andrew Johnson'
+                        email 'andrew@andrewjamesjohnson.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+nexusStaging {
+    packageGroup = 'com.andrewjamesjohnson'
+}
