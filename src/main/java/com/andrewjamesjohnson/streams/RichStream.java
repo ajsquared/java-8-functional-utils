@@ -56,19 +56,19 @@ public final class RichStream<T> implements Stream<T> {
      * Returns a stream consisting of the elements of this stream that do not match
      * the given predicate.
      *
-     * <p>This is an <a href="package-summary.html#StreamOps">intermediate
-     * operation</a>.
-     *
-     * @param predicate a <a href="package-summary.html#NonInterference">non-interfering</a>,
-     *                  <a href="package-summary.html#Statelessness">stateless</a>
-     *                  predicate to apply to each element to determine if it
-     *                  should be included
+     * @param predicate A {@code Predicate} returning true if an element should not be included
      * @return the new stream
      */
     public RichStream<T> filterNot(Predicate<? super T> predicate) {
         return filter(predicate.negate());
     }
 
+    /**
+     * Returns a stream consisting of {@link Pair}s of the original element and the index of that element
+     * Not recommended for use on infinite streams!
+     *
+     * @return the new stream
+     */
     public RichStream<Pair<T, Integer>> zipWithIndex() {
         AtomicInteger index = new AtomicInteger(0);
         return new RichStream<>(stream.map(element -> Pair.of(element, index.getAndIncrement())));
