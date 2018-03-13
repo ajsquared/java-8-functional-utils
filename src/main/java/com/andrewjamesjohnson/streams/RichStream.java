@@ -73,6 +73,59 @@ public final class RichStream<T> implements Stream<T> {
         AtomicInteger index = new AtomicInteger(0);
         return new RichStream<>(stream.map(element -> Pair.of(element, index.getAndIncrement())));
     }
+
+    /**
+     * Converts this stream to a list
+     *
+     * @return The new list
+     */
+    public List<T> toList() {
+        return collect(Collectors.toList());
+    }
+
+    /**
+     * Converts this stream to a set
+     *
+     * @return The new set
+     */
+    public Set<T> toSet() {
+        return collect(Collectors.toSet());
+    }
+
+    /**
+     * Converts this stream to a map, with the elements as keys
+     *
+     * @param valueFunction A {@code Function} on elements to produce the map values
+     * @param <V> The type of the map values
+     * @return The new map
+     */
+    public <V> Map<T, V> toMapAsKey(Function<T, V> valueFunction) {
+        return collect(Collectors.toMap(Function.identity(), valueFunction));
+    }
+
+    /**
+     * Converts this stream to a map, with the elements as values
+     *
+     * @param keyFunction A {@code Function} on elements to produce the map keys
+     * @param <K> The type of the map keys
+     * @return The new map
+     */
+    public <K> Map<K, T> toMapAsValue(Function<T, K> keyFunction) {
+        return collect(Collectors.toMap(keyFunction, Function.identity()));
+    }
+
+    /**
+     * Converts this stream to a map
+     *
+     * @param keyFunction A {@code Function} on elements to produce the map keys
+     * @param valueFunction A {@code Function} on elements to produce the map values
+     * @param <K> The type of the map keys
+     * @param <V> The type of the map values
+     * @return The new map
+     */
+    public <K, V> Map<K, V> toMap(Function<T, K> keyFunction, Function<T, V> valueFunction) {
+        return collect(Collectors.toMap(keyFunction, valueFunction));
+    }
     
     // Wrapped methods below
 
