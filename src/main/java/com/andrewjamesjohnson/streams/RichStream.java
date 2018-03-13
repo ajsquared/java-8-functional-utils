@@ -49,14 +49,33 @@ public final class RichStream<T> implements Stream<T> {
         this.stream = stream;
     }
 
+    /**
+     * Returns a stream consisting of the elements of this stream that do not match
+     * the given predicate.
+     *
+     * <p>This is an <a href="package-summary.html#StreamOps">intermediate
+     * operation</a>.
+     *
+     * @param predicate a <a href="package-summary.html#NonInterference">non-interfering</a>,
+     *                  <a href="package-summary.html#Statelessness">stateless</a>
+     *                  predicate to apply to each element to determine if it
+     *                  should be included
+     * @return the new stream
+     */
+    public RichStream<T> filterNot(Predicate<? super T> predicate) {
+        return filter(predicate.negate());
+    }
+    
+    // Wrapped methods below
+
     @Override
-    public Stream<T> filter(Predicate<? super T> predicate) {
-        return stream.filter(predicate);
+    public RichStream<T> filter(Predicate<? super T> predicate) {
+        return new RichStream<>(stream.filter(predicate));
     }
 
     @Override
     public <R> Stream<R> map(Function<? super T, ? extends R> mapper) {
-        return stream.map(mapper);
+        return new RichStream<>(stream.map(mapper));
     }
 
     @Override
@@ -76,7 +95,7 @@ public final class RichStream<T> implements Stream<T> {
 
     @Override
     public <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
-        return stream.flatMap(mapper);
+        return new RichStream<>(stream.flatMap(mapper));
     }
 
     @Override
@@ -95,33 +114,33 @@ public final class RichStream<T> implements Stream<T> {
     }
 
     @Override
-    public Stream<T> distinct() {
-        return stream.distinct();
+    public RichStream<T> distinct() {
+        return new RichStream<>(stream.distinct());
     }
 
     @Override
-    public Stream<T> sorted() {
-        return stream.sorted();
+    public RichStream<T> sorted() {
+        return new RichStream<>(stream.sorted());
     }
 
     @Override
-    public Stream<T> sorted(Comparator<? super T> comparator) {
-        return stream.sorted(comparator);
+    public RichStream<T> sorted(Comparator<? super T> comparator) {
+        return new RichStream<>(stream.sorted(comparator));
     }
 
     @Override
-    public Stream<T> peek(Consumer<? super T> action) {
-        return stream.peek(action);
+    public RichStream<T> peek(Consumer<? super T> action) {
+        return new RichStream<>(stream.peek(action));
     }
 
     @Override
-    public Stream<T> limit(long maxSize) {
-        return stream.limit(maxSize);
+    public RichStream<T> limit(long maxSize) {
+        return new RichStream<>(stream.limit(maxSize));
     }
 
     @Override
-    public Stream<T> skip(long n) {
-        return stream.skip(n);
+    public RichStream<T> skip(long n) {
+        return new RichStream<>(stream.skip(n));
     }
 
     @Override
@@ -225,23 +244,23 @@ public final class RichStream<T> implements Stream<T> {
     }
 
     @Override
-    public Stream<T> sequential() {
-        return stream.sequential();
+    public RichStream<T> sequential() {
+        return new RichStream<>(stream.sequential());
     }
 
     @Override
-    public Stream<T> parallel() {
-        return stream.parallel();
+    public RichStream<T> parallel() {
+        return new RichStream<>(stream.parallel());
     }
 
     @Override
-    public Stream<T> unordered() {
-        return stream.unordered();
+    public RichStream<T> unordered() {
+        return new RichStream<>(stream.unordered());
     }
 
     @Override
-    public Stream<T> onClose(Runnable closeHandler) {
-        return stream.onClose(closeHandler);
+    public RichStream<T> onClose(Runnable closeHandler) {
+        return new RichStream<>(stream.onClose(closeHandler));
     }
 
     @Override
