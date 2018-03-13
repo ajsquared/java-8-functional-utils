@@ -1,6 +1,9 @@
 package com.andrewjamesjohnson.streams;
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.*;
 import java.util.stream.*;
 
@@ -64,6 +67,11 @@ public final class RichStream<T> implements Stream<T> {
      */
     public RichStream<T> filterNot(Predicate<? super T> predicate) {
         return filter(predicate.negate());
+    }
+
+    public RichStream<Pair<T, Integer>> zipWithIndex() {
+        AtomicInteger index = new AtomicInteger(0);
+        return new RichStream<>(stream.map(element -> Pair.of(element, index.getAndIncrement())));
     }
     
     // Wrapped methods below
