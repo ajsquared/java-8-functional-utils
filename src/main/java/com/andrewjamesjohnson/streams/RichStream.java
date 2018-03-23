@@ -135,7 +135,7 @@ public final class RichStream<T> implements Stream<T> {
     }
 
     @Override
-    public <R> Stream<R> map(Function<? super T, ? extends R> mapper) {
+    public <R> RichStream<R> map(Function<? super T, ? extends R> mapper) {
         return new RichStream<>(stream.map(mapper));
     }
 
