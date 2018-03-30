@@ -418,7 +418,7 @@ public final class RichStream<T> implements Stream<T> {
     }
 
     public boolean anyMatch(PredicateWithCheckedException<? super T> predicate) {
-        return anyMatch(predicate);
+        return stream.anyMatch(predicate);
     }
 
     @Override
@@ -427,7 +427,7 @@ public final class RichStream<T> implements Stream<T> {
     }
 
     public boolean allMatch(PredicateWithCheckedException<? super T> predicate) {
-        return allMatch(predicate);
+        return stream.allMatch(predicate);
     }
 
     @Override
@@ -436,7 +436,7 @@ public final class RichStream<T> implements Stream<T> {
     }
 
     public boolean noneMatch(PredicateWithCheckedException<? super T> predicate) {
-        return noneMatch(predicate);
+        return stream.noneMatch(predicate);
     }
 
     @Override
