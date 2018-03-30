@@ -10,6 +10,13 @@ import java.util.function.Function;
  */
 @FunctionalInterface
 public interface FunctionWithCheckedException<T, R> extends Function<T, R> {
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param t the function argument
+     * @return the function result
+     * @throws Exception any checked exception
+     */
     R applyWithCheckedException(T t) throws Exception;
 
     @Override

@@ -1,5 +1,6 @@
 package com.andrewjamesjohnson.streams;
 
+import com.andrewjamesjohnson.exceptions.ConsumerWithCheckedException;
 import com.andrewjamesjohnson.exceptions.FunctionWithCheckedException;
 import com.andrewjamesjohnson.exceptions.PredicateWithCheckedException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -342,6 +343,10 @@ public final class RichStream<T> implements Stream<T> {
         return new RichStream<>(stream.peek(action));
     }
 
+    public RichStream<T> peek(ConsumerWithCheckedException<? super T> action) {
+        return new RichStream<>(stream.peek(action));
+    }
+
     @Override
     public RichStream<T> limit(long maxSize) {
         return new RichStream<>(stream.limit(maxSize));
@@ -357,8 +362,16 @@ public final class RichStream<T> implements Stream<T> {
         stream.forEach(action);
     }
 
+    public void forEach(ConsumerWithCheckedException<? super T> action) {
+        stream.forEach(action);
+    }
+
     @Override
     public void forEachOrdered(Consumer<? super T> action) {
+        stream.forEachOrdered(action);
+    }
+
+    public void forEachOrdered(ConsumerWithCheckedException<? super T> action) {
         stream.forEachOrdered(action);
     }
 
