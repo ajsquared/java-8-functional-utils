@@ -1,5 +1,7 @@
 package com.andrewjamesjohnson.streams;
 
+import com.andrewjamesjohnson.exceptions.FunctionWithCheckedException;
+import com.andrewjamesjohnson.exceptions.PredicateWithCheckedException;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -85,6 +87,18 @@ public final class RichStream<T> implements Stream<T> {
         return filter(predicate.negate());
     }
 
+
+    /**
+     * Returns a stream consisting of the elements of this stream that do not match
+     * the given predicate.
+     *
+     * @param predicate A {@link PredicateWithCheckedException} returning true if an element should not be included
+     * @return the new stream
+     */
+    public RichStream<T> filterNot(PredicateWithCheckedException<? super T> predicate) {
+        return filter(predicate.negate());
+    }
+
     /**
      * Returns a stream consisting of {@link Pair}s of the original element and the index of that element
      * Not recommended for use on infinite streams!
@@ -153,6 +167,17 @@ public final class RichStream<T> implements Stream<T> {
     }
 
     /**
+     * Converts this stream to a map, with the elements as keys
+     *
+     * @param valueFunction A {@link FunctionWithCheckedException} on elements to produce the map values
+     * @param <V> The type of the map values
+     * @return The new map
+     */
+    public <V> Map<T, V> toMapAsKey(FunctionWithCheckedException<T, V> valueFunction) {
+        return collect(Collectors.toMap(Function.identity(), valueFunction));
+    }
+
+    /**
      * Converts this stream to a map, with the elements as values
      *
      * @param keyFunction A {@code Function} on elements to produce the map keys
@@ -160,6 +185,17 @@ public final class RichStream<T> implements Stream<T> {
      * @return The new map
      */
     public <K> Map<K, T> toMapAsValue(Function<T, K> keyFunction) {
+        return collect(Collectors.toMap(keyFunction, Function.identity()));
+    }
+
+    /**
+     * Converts this stream to a map, with the elements as values
+     *
+     * @param keyFunction A {@link FunctionWithCheckedException} on elements to produce the map keys
+     * @param <K> The type of the map keys
+     * @return The new map
+     */
+    public <K> Map<K, T> toMapAsValue(FunctionWithCheckedException<T, K> keyFunction) {
         return collect(Collectors.toMap(keyFunction, Function.identity()));
     }
 
@@ -175,6 +211,45 @@ public final class RichStream<T> implements Stream<T> {
     public <K, V> Map<K, V> toMap(Function<T, K> keyFunction, Function<T, V> valueFunction) {
         return collect(Collectors.toMap(keyFunction, valueFunction));
     }
+
+    /**
+     * Converts this stream to a map
+     *
+     * @param keyFunction A {@link FunctionWithCheckedException} on elements to produce the map keys
+     * @param valueFunction A {@code Function} on elements to produce the map values
+     * @param <K> The type of the map keys
+     * @param <V> The type of the map values
+     * @return The new map
+     */
+    public <K, V> Map<K, V> toMap(FunctionWithCheckedException<T, K> keyFunction, Function<T, V> valueFunction) {
+        return collect(Collectors.toMap(keyFunction, valueFunction));
+    }
+
+    /**
+     * Converts this stream to a map
+     *
+     * @param keyFunction A {@code Function} on elements to produce the map keys
+     * @param valueFunction A {@link FunctionWithCheckedException} on elements to produce the map values
+     * @param <K> The type of the map keys
+     * @param <V> The type of the map values
+     * @return The new map
+     */
+    public <K, V> Map<K, V> toMap(Function<T, K> keyFunction, FunctionWithCheckedException<T, V> valueFunction) {
+        return collect(Collectors.toMap(keyFunction, valueFunction));
+    }
+
+    /**
+     * Converts this stream to a map
+     *
+     * @param keyFunction A {@link FunctionWithCheckedException} on elements to produce the map keys
+     * @param valueFunction A {@link FunctionWithCheckedException} on elements to produce the map values
+     * @param <K> The type of the map keys
+     * @param <V> The type of the map values
+     * @return The new map
+     */
+    public <K, V> Map<K, V> toMap(FunctionWithCheckedException<T, K> keyFunction, FunctionWithCheckedException<T, V> valueFunction) {
+        return collect(Collectors.toMap(keyFunction, valueFunction));
+    }
     
     // Wrapped methods below
 
@@ -183,8 +258,16 @@ public final class RichStream<T> implements Stream<T> {
         return new RichStream<>(stream.filter(predicate));
     }
 
+    public RichStream<T> filter(PredicateWithCheckedException<? super T> predicate) {
+        return new RichStream<>(stream.filter(predicate));
+    }
+
     @Override
     public <R> RichStream<R> map(Function<? super T, ? extends R> mapper) {
+        return new RichStream<>(stream.map(mapper));
+    }
+
+    public <R> RichStream<R> map(FunctionWithCheckedException<? super T, ? extends R> mapper) {
         return new RichStream<>(stream.map(mapper));
     }
 
@@ -208,8 +291,16 @@ public final class RichStream<T> implements Stream<T> {
         return new RichStream<>(stream.flatMap(mapper));
     }
 
+    public <R> Stream<R> flatMap(FunctionWithCheckedException<? super T, ? extends Stream<? extends R>> mapper) {
+        return new RichStream<>(stream.flatMap(mapper));
+    }
+
     @Override
     public IntStream flatMapToInt(Function<? super T, ? extends IntStream> mapper) {
+        return stream.flatMapToInt(mapper);
+    }
+
+    public IntStream flatMapToInt(FunctionWithCheckedException<? super T, ? extends IntStream> mapper) {
         return stream.flatMapToInt(mapper);
     }
 
@@ -218,8 +309,16 @@ public final class RichStream<T> implements Stream<T> {
         return stream.flatMapToLong(mapper);
     }
 
+    public LongStream flatMapToLong(FunctionWithCheckedException<? super T, ? extends LongStream> mapper) {
+        return stream.flatMapToLong(mapper);
+    }
+
     @Override
     public DoubleStream flatMapToDouble(Function<? super T, ? extends DoubleStream> mapper) {
+        return stream.flatMapToDouble(mapper);
+    }
+
+    public DoubleStream flatMapToDouble(FunctionWithCheckedException<? super T, ? extends DoubleStream> mapper) {
         return stream.flatMapToDouble(mapper);
     }
 
@@ -318,14 +417,26 @@ public final class RichStream<T> implements Stream<T> {
         return stream.anyMatch(predicate);
     }
 
+    public boolean anyMatch(PredicateWithCheckedException<? super T> predicate) {
+        return anyMatch(predicate);
+    }
+
     @Override
     public boolean allMatch(Predicate<? super T> predicate) {
         return stream.allMatch(predicate);
     }
 
+    public boolean allMatch(PredicateWithCheckedException<? super T> predicate) {
+        return allMatch(predicate);
+    }
+
     @Override
     public boolean noneMatch(Predicate<? super T> predicate) {
         return stream.noneMatch(predicate);
+    }
+
+    public boolean noneMatch(PredicateWithCheckedException<? super T> predicate) {
+        return noneMatch(predicate);
     }
 
     @Override
