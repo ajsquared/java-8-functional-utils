@@ -1,8 +1,6 @@
 package com.andrewjamesjohnson.streams;
 
-import com.andrewjamesjohnson.exceptions.ConsumerWithCheckedException;
-import com.andrewjamesjohnson.exceptions.FunctionWithCheckedException;
-import com.andrewjamesjohnson.exceptions.PredicateWithCheckedException;
+import com.andrewjamesjohnson.exceptions.*;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
@@ -277,13 +275,25 @@ public final class RichStream<T> implements Stream<T> {
         return stream.mapToInt(mapper);
     }
 
+    public IntStream mapToInt(ToIntFunctionWithCheckedException<? super T> mapper) {
+        return stream.mapToInt(mapper);
+    }
+
     @Override
     public LongStream mapToLong(ToLongFunction<? super T> mapper) {
         return stream.mapToLong(mapper);
     }
 
+    public LongStream mapToLong(ToLongFunctionWithCheckedException<? super T> mapper) {
+        return stream.mapToLong(mapper);
+    }
+
     @Override
     public DoubleStream mapToDouble(ToDoubleFunction<? super T> mapper) {
+        return stream.mapToDouble(mapper);
+    }
+
+    public DoubleStream mapToDouble(ToDoubleFunctionWithCheckedException<? super T> mapper) {
         return stream.mapToDouble(mapper);
     }
 

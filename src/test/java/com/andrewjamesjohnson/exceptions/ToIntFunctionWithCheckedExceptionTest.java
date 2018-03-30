@@ -11,20 +11,20 @@ import org.junit.runner.RunWith;
 import java.util.List;
 
 @RunWith(JUnitQuickcheck.class)
-public class PredicateWithCheckedExceptionTest {
+public class ToIntFunctionWithCheckedExceptionTest {
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
     @Property
-    public void checkedExceptionsWrappedFromPredicate(List<Integer> list) {
+    public void checkedExceptionsWrappedFromFunction(List<Integer> list) {
         if (!list.isEmpty()) {
             exception.expect(LambdaWrappedCheckedException.class);
             exception.expectCause(IsInstanceOf.instanceOf(DummyException.class));
         }
 
-        RichStream.of(list).filter(i -> {
+        RichStream.of(list).mapToInt(i -> {
             throw new DummyException();
-        }).toList();
+        }).max();
     }
 }

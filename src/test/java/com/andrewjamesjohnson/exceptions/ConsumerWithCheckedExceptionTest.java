@@ -12,8 +12,6 @@ import java.util.List;
 
 @RunWith(JUnitQuickcheck.class)
 public class ConsumerWithCheckedExceptionTest {
-    private static class DummyException extends Exception { }
-
     @Rule
     public ExpectedException exception = ExpectedException.none();
 

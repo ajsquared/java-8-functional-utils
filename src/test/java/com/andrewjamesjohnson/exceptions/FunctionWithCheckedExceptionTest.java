@@ -12,7 +12,6 @@ import java.util.List;
 
 @RunWith(JUnitQuickcheck.class)
 public class FunctionWithCheckedExceptionTest {
-    private static class DummyException extends Exception { }
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
