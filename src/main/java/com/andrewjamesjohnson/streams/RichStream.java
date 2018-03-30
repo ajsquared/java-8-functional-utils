@@ -32,7 +32,7 @@ public final class RichStream<T> implements Stream<T> {
      * @return A {@code RichStream} wrapping the given collection
      */
     public static <T> RichStream<T> of(Collection<T> collection) {
-        return new RichStream<>(collection.stream());
+        return of(collection.stream());
     }
 
     /**
@@ -43,7 +43,29 @@ public final class RichStream<T> implements Stream<T> {
      * @return A {@code RichStream} wrapping the given array
      */
     public static <T> RichStream<T> of(T[] array) {
-        return new RichStream<>(Stream.of(array));
+        return of(Arrays.stream(array));
+    }
+
+    /**
+     * Creates a {@code RichStream} from an {@code Iterable}
+     * 
+     * @param iterable The iterable to wrap
+     * @param <T> The type of elements in the iterable
+     * @return A {@code RichStream} wrapping the given array
+     */
+    public static <T> RichStream<T> of(Iterable<T> iterable) {
+        return of(StreamSupport.stream(iterable.spliterator(), false));
+    }
+
+    /**
+     * Creates a {@code RichStream} from an {@code Iterator}
+     *
+     * @param iterator The iterator to wrap
+     * @param <T> The type of elements in the iterator
+     * @return A {@code RichStream} wrapping the given array
+     */
+    public static <T> RichStream<T> of(Iterator<T> iterator) {
+        return of(() -> iterator);
     }
 
     private Stream<T> stream;
@@ -67,11 +89,38 @@ public final class RichStream<T> implements Stream<T> {
      * Returns a stream consisting of {@link Pair}s of the original element and the index of that element
      * Not recommended for use on infinite streams!
      *
-     * @return the new stream
+     * @return The new stream
      */
     public RichStream<Pair<T, Integer>> zipWithIndex() {
         AtomicInteger index = new AtomicInteger(0);
         return new RichStream<>(stream.map(element -> Pair.of(element, index.getAndIncrement())));
+    }
+
+    /**
+     * Returns a stream consisting of {@link Pair}s of elements from this stream and another
+     * 
+     * The resulting stream has the same length as the shorter of the two streams
+     * Not recommended for use on infinite streams!
+     *
+     * @param other The other stream
+     * @param <R> The type of elements in the other stream
+     * @return The new stream
+     */
+    public <R> RichStream<Pair<T, R>> zip(Stream<R> other) {
+        Iterator<T> iterator = iterator();
+        Iterator<R> otherIterator = other.iterator();
+        Iterator<Pair<T, R>> pairIterator = new Iterator<Pair<T, R>>() {
+            @Override
+            public boolean hasNext() {
+                return iterator.hasNext() && otherIterator.hasNext();
+            }
+
+            @Override
+            public Pair<T, R> next() {
+                return Pair.of(iterator.next(), otherIterator.next());
+            }
+        };
+        return RichStream.of(pairIterator);
     }
 
     /**
