@@ -1,4 +1,4 @@
-# java-8-functional-utils
+# java-8-functional-utils [![Build Status](https://travis-ci.org/ajsquared/java-8-functional-utils.svg?branch=master)](https://travis-ci.org/ajsquared/java-8-functional-utils)
 
 `java-8-functional-utils` is a library that offers various enhancements for funtional programming in Java 8.
 
